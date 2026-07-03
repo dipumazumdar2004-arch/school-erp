@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School ERP Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="school-erp.css" />
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to content</a>
+
+  <!-- LOGIN PAGE -->
+  <section class="login-screen" id="loginScreen">
+    <div class="login-shell">
+      <div class="login-brand-panel">
+        <div class="brand-badge">ERP</div>
+        <h1>School ERP Portal</h1>
+        <p>
+          A role-based portal for admin, teacher, and student operations including
+          attendance, marks, reports, certificates, and analytics.
+        </p>
+
+        <div class="login-feature-list">
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <span>Admin controls complete school operations</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <span>Teachers manage attendance, subjects, and marks</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <span>Students download marksheets and certificates</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-form-panel">
+        <div class="login-card">
+          <div class="card-head">
+            <h2>Login</h2>
+            <p>Select your role and sign in to continue.</p>
+          </div>
+
+          <form id="loginForm" class="login-form" novalidate>
+            <div class="form-group">
+              <label for="roleSelect">Login as</label>
+              <select id="roleSelect" name="role" required>
+                <option value="">Select role</option>
+                <option value="admin">Admin</option>
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="emailInput">Email or Username</label>
+              <input
+                type="text"
+                id="emailInput"
+                name="email"
+                placeholder="Enter email or username"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="passwordInput">Password</label>
+              <input
+                type="password"
+                id="passwordInput"
+                name="password"
+                placeholder="Enter password"
+                required
+              />
+            </div>
+
+            <div class="form-row form-row-between">
+              <label class="checkbox-row">
+                <input type="checkbox" id="rememberUser" />
+                <span>Remember me</span>
+              </label>
+              <button type="button" class="link-button" id="forgotPasswordBtn">
+                Forgot password?
+              </button>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+              Sign In
+            </button>
+
+            <p class="form-message" id="loginMessage" aria-live="polite"></p>
+          </form>
+
+          <div class="demo-credentials">
+            <h3>Demo roles</h3>
+            <ul>
+              <li><strong>Admin:</strong> admin@school.com</li>
+              <li><strong>Teacher:</strong> teacher@school.com</li>
+              <li><strong>Student:</strong> student@school.com</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD APP -->
+  <div class="app-shell hidden" id="appShell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="logo-wrap">
+          <div class="logo-mark">SE</div>
+          <div class="logo-text">
+            <h2>School ERP</h2>
+            <p id="sidebarRoleText">Admin Panel</p>
+          </div>
+        </div>
+
+        <button class="icon-btn sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar">
+          ✕
+        </button>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-section="overviewSection">
+          <span>Dashboard Overview</span>
+        </button>
+
+        <button class="nav-item admin-only" data-section="userManagementSection">
+          <span>User Management</span>
+        </button>
+
+        <button class="nav-item admin-only teacher-only" data-section="classManagementSection">
+          <span>Class & Section Management</span>
+        </button>
+
+        <button class="nav-item teacher-only admin-only" data-section="teacherTimeSection">
+          <span>Teacher Entry / Exit</span>
+        </button>
+
+        <button class="nav-item teacher-only admin-only" data-section="studentAttendanceSection">
+          <span>Student Attendance</span>
+        </button>
+
+        <button class="nav-item teacher-only admin-only" data-section="subjectManagementSection">
+          <span>Subject Management</span>
+        </button>
+
+        <button class="nav-item teacher-only admin-only" data-section="marksEntrySection">
+          <span>Exam Marks Entry</span>
+        </button>
+
+        <button class="nav-item student-only admin-only teacher-only" data-section="reportsSection">
+          <span>Reports & Downloads</span>
+        </button>
+
+        <button class="nav-item admin-only teacher-only" data-section="analyticsSection">
+          <span>Performance Analytics</span>
+        </button>
+
+        <button class="nav-item student-only" data-section="studentProfileSection">
+          <span>Student Profile</span>
+        </button>
+
+        <button class="nav-item" data-section="settingsSection">
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-mini-card">
+          <div class="avatar-circle" id="sidebarAvatar">A</div>
+          <div>
+            <h4 id="sidebarUserName">Administrator</h4>
+            <p id="sidebarUserRole">Admin</p>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost btn-block" id="logoutBtn">Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-shell">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn sidebar-open-btn" id="sidebarOpenBtn" aria-label="Open sidebar">
+            ☰
+          </button>
+          <div>
+            <h1 id="pageTitle">Dashboard Overview</h1>
+            <p id="pageSubtitle">Welcome to the school ERP system.</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="topbar-search">
+            <input type="search" id="globalSearch" placeholder="Search student, class, report..." />
+          </div>
+
+          <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle theme">
+            🌙
+          </button>
+
+          <div class="topbar-user">
+            <div class="avatar-circle" id="topbarAvatar">A</div>
+            <div class="topbar-user-info">
+              <h4 id="topbarUserName">Administrator</h4>
+              <p id="topbarUserRole">Admin</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content" id="mainContent">
+        <!-- OVERVIEW -->
+        <section class="content-section active-section" id="overviewSection">
+          <div class="section-head">
+            <div>
+              <h2>Dashboard Overview</h2>
+              <p>Quick summary of classes, attendance, exams, and performance.</p>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <h3>Total Students</h3>
+              <p class="stat-value" id="totalStudentsCard">0</p>
+              <span class="stat-meta">Active enrolled students</span>
+            </article>
+
+            <article class="stat-card">
+              <h3>Total Teachers</h3>
+              <p class="stat-value" id="totalTeachersCard">0</p>
+              <span class="stat-meta">Teaching staff count</span>
+            </article>
+
+            <article class="stat-card">
+              <h3>Total Classes</h3>
+              <p class="stat-value" id="totalClassesCard">0</p>
+              <span class="stat-meta">Classes from 1 to 10</span>
+            </article>
+
+            <article class="stat-card">
+              <h3>Attendance Today</h3>
+              <p class="stat-value" id="attendanceTodayCard">0%</p>
+              <span class="stat-meta">Student attendance percentage</span>
+            </article>
+          </div>
+
+          <div class="panel-grid two-column">
+            <article class="panel-card">
+              <div class="panel-card-head">
+                <h3>Recent Activities</h3>
+                <button class="btn btn-ghost btn-sm">View all</button>
+              </div>
+              <div id="recentActivityList" class="list-stack">
+                <div class="empty-note">Recent activity will appear here.</div>
+              </div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-card-head">
+                <h3>Quick Actions</h3>
+              </div>
+              <div class="quick-actions-grid">
+                <button class="quick-action-btn" data-section-target="classManagementSection">Manage Classes</button>
+                <button class="quick-action-btn" data-section-target="studentAttendanceSection">Take Attendance</button>
+                <button class="quick-action-btn" data-section-target="marksEntrySection">Enter Marks</button>
+                <button class="quick-action-btn" data-section-target="reportsSection">Download Reports</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- USER MANAGEMENT -->
+        <section class="content-section" id="userManagementSection">
+          <div class="section-head">
+            <div>
+              <h2>User Management</h2>
+              <p>Create and manage admin, teacher, and student accounts.</p>
+            </div>
+            <button class="btn btn-primary" id="addUserBtn">Add User</button>
+          </div>
+
+          <div class="panel-card">
+            <div class="table-toolbar">
+              <input type="search" id="userSearchInput" placeholder="Search users..." />
+              <select id="userRoleFilter">
+                <option value="all">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+              </select>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="userTableBody">
+                  <tr>
+                    <td colspan="5" class="empty-cell">No users loaded yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- CLASS MANAGEMENT -->
+        <section class="content-section" id="classManagementSection">
+          <div class="section-head">
+            <div>
+              <h2>Class & Section Management</h2>
+              <p>Manage classes, add sections, and edit class structure.</p>
+            </div>
+            <button class="btn btn-primary" id="addClassBtn">Add Class</button>
+          </div>
+
+          <div class="panel-grid two-column">
+            <article class="panel-card">
+              <h3>Create / Edit Class</h3>
+              <form id="classForm" class="form-grid" novalidate>
+                <div class="form-group">
+                  <label for="classNameInput">Class Name</label>
+                  <select id="classNameInput" required>
+                    <option value="">Select class</option>
+                    <option value="1">Class 1</option>
+                    <option value="2">Class 2</option>
+                    <option value="3">Class 3</option>
+                    <option value="4">Class 4</option>
+                    <option value="5">Class 5</option>
+                    <option value="6">Class 6</option>
+                    <option value="7">Class 7</option>
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="hasSectionsInput">Has Section?</label>
+                  <select id="hasSectionsInput" required>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="sectionsGroup">
+                  <label for="sectionsInput">Sections</label>
+                  <input type="text" id="sectionsInput" placeholder="Example: A, B" />
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save Class</button>
+                  <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel-card">
+              <h3>Class List</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Class</th>
+                      <th>Has Section</th>
+                      <th>Sections</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="classTableBody">
+                    <tr>
+                      <td colspan="4" class="empty-cell">No classes added yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- TEACHER TIME -->
+        <section class="content-section" id="teacherTimeSection">
+          <div class="section-head">
+            <div>
+              <h2>Teacher Entry / Exit</h2>
+              <p>Record teacher daily entry and exit time.</p>
+            </div>
+          </div>
+
+          <div class="panel-grid two-column">
+            <article class="panel-card">
+              <h3>Time Entry Form</h3>
+              <form id="teacherTimeForm" class="form-grid" novalidate>
+                <div class="form-group">
+                  <label for="teacherSelect">Teacher</label>
+                  <select id="teacherSelect" required>
+                    <option value="">Select teacher</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="timeLogDate">Date</label>
+                  <input type="date" id="timeLogDate" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="entryTime">Entry Time</label>
+                  <input type="time" id="entryTime" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="exitTime">Exit Time</label>
+                  <input type="time" id="exitTime" required />
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save Time Log</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel-card">
+              <h3>Teacher Time Logs</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Teacher</th>
+                      <th>Date</th>
+                      <th>Entry</th>
+                      <th>Exit</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="teacherTimeTableBody">
+                    <tr>
+                      <td colspan="5" class="empty-cell">No time logs available.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- STUDENT ATTENDANCE -->
+        <section class="content-section" id="studentAttendanceSection">
+          <div class="section-head">
+            <div>
+              <h2>Student Attendance</h2>
+              <p>Take attendance class-wise and section-wise.</p>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <form id="attendanceFilterForm" class="toolbar-form" novalidate>
+              <div class="form-group">
+                <label for="attendanceClassSelect">Class</label>
+                <select id="attendanceClassSelect" required>
+                  <option value="">Select class</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="attendanceSectionSelect">Section</label>
+                <select id="attendanceSectionSelect">
+                  <option value="">Select section</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="attendanceDate">Date</label>
+                <input type="date" id="attendanceDate" required />
+              </div>
+
+              <div class="form-actions compact">
+                <button type="button" class="btn btn-primary" id="loadAttendanceBtn">Load Students</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <h3>Attendance Register</h3>
+              <button class="btn btn-primary btn-sm" id="saveAttendanceBtn">Save Attendance</button>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Roll</th>
+                    <th>Student Name</th>
+                    <th>Class</th>
+                    <th>Section</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTableBody">
+                  <tr>
+                    <td colspan="5" class="empty-cell">Load a class to mark attendance.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SUBJECT MANAGEMENT -->
+        <section class="content-section" id="subjectManagementSection">
+          <div class="section-head">
+            <div>
+              <h2>Subject Management</h2>
+              <p>Add subject count and subject names for each class.</p>
+            </div>
+          </div>
+
+          <div class="panel-grid two-column">
+            <article class="panel-card">
+              <h3>Add Subjects</h3>
+              <form id="subjectForm" class="form-grid" novalidate>
+                <div class="form-group">
+                  <label for="subjectClassSelect">Class</label>
+                  <select id="subjectClassSelect" required>
+                    <option value="">Select class</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="subjectSectionSelect">Section</label>
+                  <select id="subjectSectionSelect">
+                    <option value="">No Section / Select Section</option>
+                  </select>
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="subjectNamesInput">Subject Names</label>
+                  <input
+                    type="text"
+                    id="subjectNamesInput"
+                    placeholder="Example: English, Maths, Science, Social Science"
+                    required
+                  />
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save Subjects</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel-card">
+              <h3>Subject List</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Class</th>
+                      <th>Section</th>
+                      <th>Subjects</th>
+                      <th>Total</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="subjectTableBody">
+                    <tr>
+                      <td colspan="5" class="empty-cell">No subjects assigned yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- MARKS ENTRY -->
+        <section class="content-section" id="marksEntrySection">
+          <div class="section-head">
+            <div>
+              <h2>Exam Marks Entry</h2>
+              <p>Enter exam marks for students based on class and subject.</p>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <form id="marksFilterForm" class="toolbar-form" novalidate>
+              <div class="form-group">
+                <label for="marksExamSelect">Exam</label>
+                <select id="marksExamSelect" required>
+                  <option value="">Select exam</option>
+                  <option value="unit-test-1">Unit Test 1</option>
+                  <option value="half-yearly">Half Yearly</option>
+                  <option value="annual">Annual Exam</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="marksClassSelect">Class</label>
+                <select id="marksClassSelect" required>
+                  <option value="">Select class</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="marksSectionSelect">Section</label>
+                <select id="marksSectionSelect">
+                  <option value="">No Section / Select Section</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="marksSubjectSelect">Subject</label>
+                <select id="marksSubjectSelect" required>
+                  <option value="">Select subject</option>
+                </select>
+              </div>
+
+              <div class="form-actions compact">
+                <button type="button" class="btn btn-primary" id="loadMarksBtn">Load Students</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <h3>Marks Register</h3>
+              <button class="btn btn-primary btn-sm" id="saveMarksBtn">Save Marks</button>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Roll</th>
+                    <th>Student Name</th>
+                    <th>Subject</th>
+                    <th>Full Marks</th>
+                    <th>Obtained Marks</th>
+                  </tr>
+                </thead>
+                <tbody id="marksTableBody">
+                  <tr>
+                    <td colspan="5" class="empty-cell">Load students to enter marks.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- REPORTS -->
+        <section class="content-section" id="reportsSection">
+          <div class="section-head">
+            <div>
+              <h2>Reports & Downloads</h2>
+              <p>Download annual marksheet and certificate in PDF format.</p>
+            </div>
+          </div>
+
+          <div class="panel-grid two-column">
+            <article class="panel-card">
+              <h3>Annual Marksheet</h3>
+              <form id="marksheetForm" class="form-grid" novalidate>
+                <div class="form-group">
+                  <label for="marksheetStudentSelect">Student</label>
+                  <select id="marksheetStudentSelect" required>
+                    <option value="">Select student</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="marksheetYearSelect">Academic Year</label>
+                  <select id="marksheetYearSelect" required>
+                    <option value="">Select year</option>
+                    <option value="2025-2026">2025-2026</option>
+                    <option value="2026-2027">2026-2027</option>
+                  </select>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-primary" id="downloadMarksheetBtn">
+                    Download Marksheet PDF
+                  </button>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel-card">
+              <h3>Certificate Download</h3>
+              <form id="certificateForm" class="form-grid" novalidate>
+                <div class="form-group">
+                  <label for="certificateStudentSelect">Student</label>
+                  <select id="certificateStudentSelect" required>
+                    <option value="">Select student</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="certificateTypeSelect">Certificate Type</label>
+                  <select id="certificateTypeSelect" required>
+                    <option value="">Select certificate</option>
+                    <option value="annual-promotion">Annual Promotion</option>
+                    <option value="bonafide">Bonafide</option>
+                    <option value="achievement">Achievement</option>
+                  </select>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-primary" id="downloadCertificateBtn">
+                    Download Certificate PDF
+                  </button>
+                </div>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <!-- ANALYTICS -->
+        <section class="content-section" id="analyticsSection">
+          <div class="section-head">
+            <div>
+              <h2>Performance Analytics</h2>
+              <p>Track student and teacher performance using dashboard summaries.</p>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <h3>Top Student Avg.</h3>
+              <p class="stat-value" id="topStudentAverage">0%</p>
+              <span class="stat-meta">Best annual academic performance</span>
+            </article>
+
+            <article class="stat-card">
+              <h3>Low Attendance Cases</h3>
+              <p class="stat-value" id="lowAttendanceCount">0</p>
+              <span class="stat-meta">Students below attendance threshold</span>
+            </article>
+
+            <article class="stat-card">
+              <h3>Teacher Punctuality</h3>
+              <p class="stat-value" id="teacherPunctualityRate">0%</p>
+              <span class="stat-meta">Based on entry and exit logs</span>
+            </article>
+
+            <article class="stat-card">
+              <h3>Exam Completion</h3>
+              <p class="stat-value" id="examCompletionRate">0%</p>
+              <span class="stat-meta">Marks entry completion progress</span>
+            </article>
+          </div>
+
+          <div class="panel-grid two-column">
+            <article class="panel-card">
+              <div class="panel-card-head">
+                <h3>Student Performance Table</h3>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Student</th>
+                      <th>Class</th>
+                      <th>Attendance</th>
+                      <th>Average Marks</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentPerformanceTableBody">
+                    <tr>
+                      <td colspan="5" class="empty-cell">No analytics data available yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-card-head">
+                <h3>Teacher Performance Table</h3>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Teacher</th>
+                      <th>Assigned Classes</th>
+                      <th>Punctuality</th>
+                      <th>Marks Updated</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="teacherPerformanceTableBody">
+                    <tr>
+                      <td colspan="5" class="empty-cell">No teacher performance data available yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- STUDENT PROFILE -->
+        <section class="content-section" id="studentProfileSection">
+          <div class="section-head">
+            <div>
+              <h2>Student Profile</h2>
+              <p>Student details, class information, attendance, and result summary.</p>
+            </div>
+          </div>
+
+          <div class="panel-grid two-column">
+            <article class="panel-card">
+              <h3>Profile Details</h3>
+              <div class="details-list" id="studentProfileDetails">
+                <div class="detail-row">
+                  <span>Name</span>
+                  <strong>—</strong>
+                </div>
+                <div class="detail-row">
+                  <span>Roll Number</span>
+                  <strong>—</strong>
+                </div>
+                <div class="detail-row">
+                  <span>Class</span>
+                  <strong>—</strong>
+                </div>
+                <div class="detail-row">
+                  <span>Section</span>
+                  <strong>—</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel-card">
+              <h3>Summary</h3>
+              <div class="details-list" id="studentAcademicSummary">
+                <div class="detail-row">
+                  <span>Attendance</span>
+                  <strong>—</strong>
+                </div>
+                <div class="detail-row">
+                  <span>Average Marks</span>
+                  <strong>—</strong>
+                </div>
+                <div class="detail-row">
+                  <span>Rank</span>
+                  <strong>—</strong>
+                </div>
+                <div class="detail-row">
+                  <span>Status</span>
+                  <strong>—</strong>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section class="content-section" id="settingsSection">
+          <div class="section-head">
+            <div>
+              <h2>Settings</h2>
+              <p>Manage profile, interface settings, and account preferences.</p>
+            </div>
+          </div>
+
+          <div class="panel-grid two-column">
+            <article class="panel-card">
+              <h3>Profile Settings</h3>
+              <form id="profileSettingsForm" class="form-grid" novalidate>
+                <div class="form-group">
+                  <label for="profileNameInput">Full Name</label>
+                  <input type="text" id="profileNameInput" placeholder="Enter full name" />
+                </div>
+
+                <div class="form-group">
+                  <label for="profileEmailInput">Email</label>
+                  <input type="email" id="profileEmailInput" placeholder="Enter email" />
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save Profile</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel-card">
+              <h3>App Preferences</h3>
+              <div class="settings-stack">
+                <label class="toggle-row">
+                  <span>Enable dark mode</span>
+                  <input type="checkbox" id="darkModeSwitch" />
+                </label>
+
+                <label class="toggle-row">
+                  <span>Enable notifications</span>
+                  <input type="checkbox" id="notificationSwitch" />
+                </label>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal hidden" id="commonModal" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="modalTitle">Modal Title</h3>
+        <button class="icon-btn" id="modalCloseBtn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <p>Modal content will appear here.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="school-erp.js"></script>
+</body>
+</html>
